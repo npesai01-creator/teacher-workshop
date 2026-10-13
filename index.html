@@ -1,0 +1,581 @@
+<title>수업자료 이야기방</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Outfit:wght@500;700;800&display=swap">
+<style>
+/* Layout: black card-news pages, a green arch/blob per question, wavy green band behind live results */
+:root{
+  --bg:#0a0b0a; --panel:#141614; --line:#2a2e2b; --ink:#f3f5f1; --muted:#8d958f;
+  --green:#4cdb80; --green-2:#a9f0c3; --green-ink:#07130b; --gray-seg:#4a504c; --danger:#ff8a7a;
+  --f-body:"Noto Sans KR",system-ui,-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-num:"Outfit","Noto Sans KR",system-ui,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6;padding-inline:16px;word-break:keep-all}
+.wrap{max-width:1040px;margin:0 auto}
+h1,h2,h3{text-wrap:balance;margin:0;line-height:1.35}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+
+/* top bar */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(8px);border-bottom:1px solid var(--line);margin-inline:-16px;padding:10px 16px}
+.top .wrap{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.brand{font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:8px}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 0 4px color-mix(in srgb,var(--green) 25%,transparent)}
+.top .sp{flex:1}
+.pill{font-size:13px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:4px 12px;display:inline-flex;gap:6px;align-items:center;white-space:nowrap}
+.pill b{color:var(--green);font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.nick{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:999px;padding:2px 4px 2px 12px}
+.nick label{font-size:12px;color:var(--muted);white-space:nowrap}
+.nick input{background:transparent;border:0;width:110px;padding:4px 6px;outline:none}
+
+/* hero */
+.hero{padding-block:56px 24px;text-align:center;position:relative}
+.hero h1{font-size:clamp(22px,4.2vw,34px);font-weight:700}
+.hero h1 .g{color:var(--green);display:block;font-weight:500}
+.hero p.lead{color:var(--muted);font-size:14px;margin:18px 0 0}
+.arches{position:relative;margin:40px auto 0;max-width:620px;height:230px}
+.ring{position:absolute;left:-6%;right:-6%;top:62%;height:70px;border:1.5px solid color-mix(in srgb,var(--green) 55%,transparent);border-radius:50%;transform:translateY(-50%)}
+.ring.r2{left:-1%;right:-1%;height:44px;opacity:.6}
+.arch{position:absolute;bottom:0;background:var(--green);color:var(--green-ink);border-radius:999px 999px 0 0;display:flex;align-items:flex-end;text-align:left}
+.arch.a1{left:0;width:46%;height:82%;padding:0 0 26px 28px;font-weight:900;font-size:clamp(16px,2.6vw,20px)}
+.arch.a2{right:0;width:62%;height:100%;padding:0 22px 26px 30px;border-radius:999px 999px 0 0;box-shadow:-8px 0 0 var(--bg)}
+.arch.a2 ol{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-weight:700;font-size:clamp(14px,2.2vw,17px);line-height:1.45}
+.arch.a2 li span{font-family:var(--f-num);font-weight:800;margin-right:6px}
+.hero .doodle{position:absolute;right:2%;top:30px;width:46px;opacity:.9}
+
+/* tabs */
+.tabs{display:flex;gap:6px;justify-content:center;margin:34px 0 0;flex-wrap:wrap}
+.tab{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:9px 18px;font-weight:700;color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--green);color:var(--green-ink);border-color:var(--green)}
+.tab:hover:not([aria-selected="true"]){border-color:var(--green);color:var(--ink)}
+
+.notice{margin:18px auto 0;max-width:640px;font-size:13px;color:var(--muted);text-align:center;border:1px dashed var(--line);border-radius:12px;padding:10px 14px}
+.notice b{color:var(--ink)}
+
+/* panels */
+section.panel{padding-block:40px 64px}
+.qhead{text-align:center;margin-bottom:28px}
+.qhead .k{font-family:var(--f-num);font-weight:800;color:var(--green);font-size:13px;letter-spacing:.14em}
+.qhead h2{font-size:clamp(22px,3.8vw,30px);font-weight:900;margin-top:6px}
+.qhead p{color:var(--muted);margin:8px 0 0;font-size:14px}
+.arrow{display:block;margin:14px auto 0;width:16px;color:var(--green)}
+
+.form{max-width:640px;margin:0 auto;display:grid;gap:18px}
+.flabel{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:8px}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.choice{border:1.5px solid var(--line);background:var(--panel);border-radius:18px;padding:16px 12px;text-align:center;display:grid;gap:2px}
+.choice b{font-size:16px}
+.choice small{color:var(--muted);font-size:12px}
+.choice[aria-pressed="true"]{background:var(--green);border-color:var(--green);color:var(--green-ink)}
+.choice[aria-pressed="true"] small{color:color-mix(in srgb,var(--green-ink) 70%,transparent)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:6px 14px;font-size:14px}
+.chip[aria-pressed="true"]{border-color:var(--green);color:var(--green);background:color-mix(in srgb,var(--green) 12%,transparent)}
+textarea{width:100%;min-height:88px;resize:vertical;background:var(--panel);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;outline:none;line-height:1.55}
+textarea:focus{border-color:var(--green)}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.btn{background:var(--green);color:var(--green-ink);border:0;border-radius:999px;padding:12px 26px;font-weight:900}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.msg{font-size:13px;color:var(--green)}
+.msg.err{color:var(--danger)}
+.count{margin-left:auto;font-size:12px;color:var(--muted);font-family:var(--f-num)}
+
+/* green wave band with results */
+.band{position:relative;margin:48px -16px 0;padding:70px 16px 70px}
+.band svg.wave{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.band > .wrap{position:relative;z-index:1}
+.result1{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:20px;color:var(--green-ink)}
+.side{font-weight:900;font-size:clamp(16px,2.4vw,20px)}
+.side.r{text-align:right}
+.disc{width:min(300px,64vw);aspect-ratio:1;max-width:100%;border-radius:50%;background:var(--bg);border:6px solid var(--bg);box-shadow:0 0 0 3px var(--green-ink);display:grid;place-items:center;position:relative}
+.disc svg{width:86%;height:86%}
+.disc .center{position:absolute;text-align:center;color:var(--ink)}
+.disc .center b{font-family:var(--f-num);font-size:clamp(30px,6vw,42px);font-weight:800;display:block;line-height:1;font-variant-numeric:tabular-nums}
+.disc .center span{font-size:12px;color:var(--muted)}
+.legend{display:flex;justify-content:center;gap:10px 18px;flex-wrap:wrap;margin-top:22px;color:var(--green-ink);font-weight:700;font-size:14px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend i{width:12px;height:12px;border-radius:4px;display:inline-block;border:1.5px solid var(--green-ink)}
+.legend em{font-style:normal;font-family:var(--f-num);font-variant-numeric:tabular-nums}
+
+.sub{margin-top:44px}
+.sub h3{font-size:18px;font-weight:900;margin-bottom:14px;display:flex;align-items:baseline;gap:10px}
+.sub h3 small{font-size:13px;color:var(--muted);font-weight:500}
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:minmax(90px,150px) 1fr 44px;gap:12px;align-items:center;font-size:14px}
+.bar .track{height:14px;border-radius:999px;background:var(--panel);overflow:hidden;border:1px solid var(--line)}
+.bar .fill{height:100%;background:var(--green);border-radius:999px;transition:width .5s ease}
+.bar .n{font-family:var(--f-num);font-weight:700;text-align:right;font-variant-numeric:tabular-nums}
+
+.notes{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:12px}
+.note{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:14px 16px;display:grid;gap:8px;min-width:0}
+.note p{margin:0;white-space:pre-wrap;overflow-wrap:anywhere}
+.note .meta{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tag{font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;background:color-mix(in srgb,var(--green) 16%,transparent);color:var(--green)}
+.empty{border:1.5px dashed var(--line);border-radius:16px;padding:22px;text-align:center;color:var(--muted);font-size:14px}
+
+/* Q2 wall */
+.q2stage{position:relative;margin:48px -16px 0;padding:56px 16px 64px;background:var(--green);border-radius:0 0 40% 40%/0 0 60px 60px;color:var(--green-ink)}
+.q2top{display:grid;grid-template-columns:1fr auto;gap:24px;align-items:end}
+.q2top h3{font-size:clamp(18px,3vw,24px);font-weight:900}
+.q2top p{margin:6px 0 0;font-size:14px;color:color-mix(in srgb,var(--green-ink) 75%,transparent)}
+.q2stage .bars .track{background:color-mix(in srgb,var(--green-ink) 12%,transparent);border-color:transparent}
+.q2stage .bars .fill{background:var(--green-ink)}
+.q2stage .who{width:120px}
+.filters{display:flex;flex-wrap:wrap;gap:8px;margin:28px 0 16px}
+.filters .chip{font-size:13px}
+.wall{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px;display:grid;gap:10px;align-content:start;min-width:0}
+.card p{margin:0;font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}
+.card .foot{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);flex-wrap:wrap}
+.like{margin-left:auto;border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:3px 10px;font-size:12px;display:inline-flex;gap:5px;align-items:center;color:var(--muted)}
+.like b{font-family:var(--f-num);font-variant-numeric:tabular-nums}
+.like[aria-pressed="true"]{border-color:var(--green);color:var(--green)}
+.x{border:0;background:transparent;color:var(--muted);font-size:12px;padding:2px 4px;text-decoration:underline}
+.x:hover{color:var(--danger)}
+.mine{display:grid;gap:8px}
+
+/* presenter */
+.present{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.pcard{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:24px;min-width:0}
+.pcard h3{font-size:18px;font-weight:900;margin-bottom:4px}
+.pcard .q{color:var(--muted);font-size:13px;margin-bottom:18px}
+.mini{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.mini svg{width:150px;height:150px;flex:none}
+.top3{display:grid;gap:10px;margin-top:20px}
+.top3 .card{background:var(--bg)}
+.big-n{font-family:var(--f-num);font-weight:800;font-size:44px;color:var(--green);line-height:1}
+.ptools{display:flex;justify-content:center;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.ghost{border:1.5px solid var(--line);background:transparent;border-radius:999px;padding:8px 16px;font-size:13px;color:var(--muted)}
+.ghost:hover{border-color:var(--green);color:var(--ink)}
+
+footer{color:var(--muted);font-size:12px;text-align:center;padding-block:10px 40px}
+
+@media (max-width:720px){
+  .result1{grid-template-columns:1fr;justify-items:center;text-align:center}
+  .side.r{text-align:center}
+  .present{grid-template-columns:1fr}
+  .q2top{grid-template-columns:1fr}
+  .q2stage .who{display:none}
+}
+@media (max-width:520px){
+  .choices{grid-template-columns:1fr}
+  .arches{height:250px}
+  .arch.a1{width:44%;height:70%;padding-left:18px;font-size:15px}
+  .arch.a2{width:70%;padding:0 14px 20px 20px}
+  .nick input{width:90px}
+  .hero .doodle{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand"><i></i>수업자료 이야기방</div>
+    <span class="sp"></span>
+    <span class="pill">참여 <b id="pcount">0</b>명</span>
+    <div class="nick"><label for="nick">이름</label><input id="nick" maxlength="12" placeholder="예: 3학년 김선생"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <svg class="doodle" viewBox="0 0 60 80" fill="none" aria-hidden="true"><path d="M30 5c14 0 14 14 0 14s-14 14 0 14 14 14 0 14-14 14 0 14 14 14 0 14" stroke="var(--green)" stroke-width="5" stroke-linecap="round"/></svg>
+    <h1>우리는 매일 수업 자료를 만들어요<span class="g">그리고 불편함도 생각보다 자주 만나요</span></h1>
+    <p class="lead">그래서 오늘은 서로의 경험을 모아 함께 보려고 해요.</p>
+    <div class="arches" aria-hidden="false">
+      <div class="ring"></div><div class="ring r2"></div>
+      <div class="arch a1">오늘의<br>질문</div>
+      <div class="arch a2"><ol>
+        <li><span>1</span>수업 자료를 직접 만들어 본 적이 있나요?</li>
+        <li><span>2</span>자료를 만들며 어떤 불편함을 겪었나요?</li>
+      </ol></div>
+    </div>
+    <nav class="tabs" role="tablist">
+      <button class="tab" role="tab" data-tab="q1" id="tab-q1">질문 1 · 경험</button>
+      <button class="tab" role="tab" data-tab="q2" id="tab-q2">질문 2 · 불편함</button>
+      <button class="tab" role="tab" data-tab="all" id="tab-all">함께 보기</button>
+    </nav>
+    <div class="notice" id="notice" hidden></div>
+  </div>
+
+  <!-- Q1 -->
+  <section class="panel" id="p-q1" role="tabpanel">
+    <div class="qhead">
+      <div class="k">QUESTION 01</div>
+      <h2>수업 자료를 직접 만들어 본 적이 있나요?</h2>
+      <p>한 사람당 하나의 응답이에요. 언제든 다시 고칠 수 있어요.</p>
+      <svg class="arrow" viewBox="0 0 16 22" aria-hidden="true"><path d="M8 1v18M2 13l6 7 6-7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <form class="form" id="f1">
+      <div>
+        <div class="flabel">얼마나 자주 만드시나요?</div>
+        <div class="choices" id="choices"></div>
+      </div>
+      <div id="kindsBox">
+        <div class="flabel">어떤 자료를 만들어 보셨나요? (여러 개 선택)</div>
+        <div class="chips" id="kinds"></div>
+      </div>
+      <div>
+        <div class="flabel"><label for="note1">기억에 남는 자료를 한 줄로 소개해 주세요 (선택)</label></div>
+        <textarea id="note1" maxlength="150" placeholder="예: 분수 개념을 피자 카드로 만든 학습지가 반응이 좋았어요"></textarea>
+      </div>
+      <div>
+        <div class="flabel"><label for="hard1">수업 자료를 만들 때 어려운 점을 적어 주세요 (선택)</label></div>
+        <textarea id="hard1" maxlength="200" placeholder="예: 아이들 수준에 맞는 그림을 찾기가 어렵고, 학습지 칸 맞추는 데 시간이 오래 걸려요"></textarea>
+      </div>
+      <div class="row"><button class="btn" id="save1" type="submit">응답 보내기</button><span class="msg" id="msg1" role="status"></span></div>
+    </form>
+
+    <div class="band">
+      <svg class="wave" viewBox="0 0 1000 400" preserveAspectRatio="none" aria-hidden="true"><path d="M0 60 C120 10 260 90 400 50 S700 0 820 40 S960 70 1000 30 L1000 360 C880 400 760 320 620 360 S340 400 200 350 S60 340 0 380 Z" fill="var(--green)"/></svg>
+      <div class="wrap">
+        <div class="result1">
+          <div class="side">과연<br>우리 선생님들은</div>
+          <div class="disc"><svg id="donut1" viewBox="0 0 200 200"></svg><div class="center"><b id="q1n">0</b><span>명 응답</span></div></div>
+          <div class="side r" id="q1headline">얼마나 자주<br>만들까요?</div>
+        </div>
+        <div class="legend" id="legend1"></div>
+      </div>
+    </div>
+
+    <div class="sub">
+      <h3>가장 많이 만든 자료 <small>복수 선택 기준</small></h3>
+      <div class="bars" id="kindBars"></div>
+    </div>
+    <div class="sub">
+      <h3>기억에 남는 자료 <small id="noteCount"></small></h3>
+      <div class="notes" id="notes1"></div>
+    </div>
+    <div class="sub">
+      <h3>만들 때 어려운 점 <small id="hardCount"></small></h3>
+      <div class="notes" id="hardList"></div>
+    </div>
+  </section>
+
+  <!-- Q2 -->
+  <section class="panel" id="p-q2" role="tabpanel" hidden>
+    <div class="qhead">
+      <div class="k">QUESTION 02</div>
+      <h2>수업 자료를 만들며 불편했던 적이 있나요?</h2>
+      <p>떠오르는 만큼 여러 장 올려 주세요. 다른 선생님 카드에는 ‘나도요’로 공감할 수 있어요.</p>
+      <svg class="arrow" viewBox="0 0 16 22" aria-hidden="true"><path d="M8 1v18M2 13l6 7 6-7" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </div>
+    <form class="form" id="f2">
+      <div>
+        <div class="flabel">어떤 종류의 불편함인가요?</div>
+        <div class="chips" id="cats"></div>
+      </div>
+      <div>
+        <div class="flabel"><label for="text2">구체적인 상황을 적어 주세요</label></div>
+        <textarea id="text2" maxlength="200" placeholder="예: 학습지 하나 만드는 데 퇴근 후 두 시간이 걸려요. 서식 맞추는 게 제일 오래 걸려요."></textarea>
+      </div>
+      <div class="row"><button class="btn" id="add2" type="submit">카드 올리기</button><span class="msg" id="msg2" role="status"></span><span class="count" id="len2">0 / 200</span></div>
+      <div class="mine" id="mine2"></div>
+    </form>
+
+    <div class="q2stage">
+      <div class="wrap">
+        <div class="q2top">
+          <div>
+            <h3>우리가 겪은 불편함, 이렇게 모였어요</h3>
+            <p id="q2sum">첫 카드를 기다리고 있어요.</p>
+            <div class="bars" id="catBars" style="margin-top:18px"></div>
+          </div>
+          <div class="who" aria-hidden="true" id="who2"></div>
+        </div>
+      </div>
+    </div>
+    <div class="filters" id="filters"></div>
+    <div class="row" style="margin-bottom:14px"><span class="flabel" style="margin:0">정렬</span>
+      <button class="chip" type="button" id="sortLike" aria-pressed="true">공감 많은 순</button>
+      <button class="chip" type="button" id="sortNew" aria-pressed="false">최신 순</button>
+    </div>
+    <div class="wall" id="wall"></div>
+  </section>
+
+  <!-- presenter -->
+  <section class="panel" id="p-all" role="tabpanel" hidden>
+    <div class="qhead">
+      <div class="k">TOGETHER</div>
+      <h2>지금까지 모인 이야기</h2>
+      <p>연수 화면에 띄워 두면 응답이 들어오는 대로 바뀌어요.</p>
+    </div>
+    <div class="ptools"><button class="ghost" type="button" id="fs">전체 화면으로 보기</button></div>
+    <div class="present">
+      <div class="pcard">
+        <h3>질문 1 · 자료 제작 경험</h3>
+        <div class="q">수업 자료를 직접 만들어 본 적이 있나요?</div>
+        <div class="mini"><svg id="donut2" viewBox="0 0 200 200"></svg><div id="legend2" style="display:grid;gap:8px;min-width:0"></div></div>
+        <div class="sub" style="margin-top:22px"><div class="bars" id="kindBars2"></div></div>
+        <div class="sub" style="margin-top:26px"><h3 style="font-size:15px">최근에 올라온 어려운 점</h3><div class="top3" id="hard2" style="margin-top:0"></div></div>
+      </div>
+      <div class="pcard">
+        <h3>질문 2 · 불편했던 점</h3>
+        <div class="q">공감을 가장 많이 받은 카드</div>
+        <div class="row"><span class="big-n" id="bigN">0</span><span style="color:var(--muted);font-size:13px">장의 카드 ·<br>가장 많은 고민 <b id="topCat" style="color:var(--ink)">-</b></span></div>
+        <div class="top3" id="top3"></div>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>
+  <div>교사 연수 · 수업자료 이야기방 — 응답은 이 페이지를 연 모든 분께 실시간으로 보여요.</div>
+  <div class="row" style="justify-content:center;margin-top:10px">
+    <button class="ghost" type="button" id="adminBtn">진행자</button>
+    <span id="adminTools" hidden><button class="ghost" type="button" id="resetAll" style="border-color:var(--danger);color:var(--danger)">모든 응답 지우기</button></span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const CHOICES=[
+    {id:'often',label:'자주 만들어요',sub:'거의 매주',color:'var(--green)'},
+    {id:'some',label:'가끔 만들어요',sub:'필요할 때마다',color:'var(--green-2)'},
+    {id:'never',label:'아직 없어요',sub:'주로 있는 자료 활용',color:'var(--gray-seg)'}
+  ];
+  const KINDS=['PPT·슬라이드','학습지·활동지','영상','퀴즈·게임','디지털 도구','교구·실물','평가지','기타'];
+  const CATS=[
+    {id:'time',label:'시간이 부족해요'},{id:'design',label:'디자인·꾸미기'},
+    {id:'tool',label:'도구 사용법'},{id:'find',label:'자료 찾기·저작권'},
+    {id:'device',label:'기기·학교 환경'},{id:'level',label:'학생 수준 맞추기'},
+    {id:'share',label:'공유·관리'},{id:'etc',label:'기타'}
+  ];
+  const $=s=>document.querySelector(s);
+  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const ls={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+  // --- local state ---
+  let me=null, isOwner=false, readOnly=false;
+  let q1={}, q2={}, likes={};
+  let pick={choice:null,kinds:new Set()}, cat2=null, filter='all', sort='like';
+  let q1Loaded=false;
+
+  const nick=$('#nick'); nick.value=ls.get('nick')||'';
+  nick.addEventListener('input',()=>ls.set('nick',nick.value.trim()));
+  const myName=()=>nick.value.trim()||'익명 선생님';
+
+  // --- tabs ---
+  function showTab(t){
+    ['q1','q2','all'].forEach(k=>{$('#p-'+k).hidden=k!==t;$('#tab-'+k).setAttribute('aria-selected',k===t)});
+    ls.set('tab',t);
+  }
+  document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>{showTab(b.dataset.tab);}));
+  const h=(location.hash||'').slice(1);
+  showTab(['q1','q2','all'].includes(h)?h:(ls.get('tab')||'q1'));
+
+  // --- form controls ---
+  $('#choices').innerHTML=CHOICES.map(c=>`<button type="button" class="choice" data-id="${c.id}" aria-pressed="false"><b>${c.label}</b><small>${c.sub}</small></button>`).join('');
+  $('#kinds').innerHTML=KINDS.map(k=>`<button type="button" class="chip" data-k="${esc(k)}" aria-pressed="false">${esc(k)}</button>`).join('');
+  $('#cats').innerHTML=CATS.map(c=>`<button type="button" class="chip" data-c="${c.id}" aria-pressed="false">${c.label}</button>`).join('');
+  $('#filters').innerHTML=`<button type="button" class="chip" data-f="all" aria-pressed="true">전체</button>`+CATS.map(c=>`<button type="button" class="chip" data-f="${c.id}" aria-pressed="false">${c.label}</button>`).join('');
+
+  function paintPick(){
+    document.querySelectorAll('#choices .choice').forEach(b=>b.setAttribute('aria-pressed',b.dataset.id===pick.choice));
+    document.querySelectorAll('#kinds .chip').forEach(b=>b.setAttribute('aria-pressed',pick.kinds.has(b.dataset.k)));
+    $('#kindsBox').hidden=pick.choice==='never';
+  }
+  $('#choices').addEventListener('click',e=>{const b=e.target.closest('.choice');if(!b)return;pick.choice=b.dataset.id;paintPick();});
+  $('#kinds').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;const k=b.dataset.k;pick.kinds.has(k)?pick.kinds.delete(k):pick.kinds.add(k);paintPick();});
+  $('#cats').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;cat2=cat2===b.dataset.c?null:b.dataset.c;document.querySelectorAll('#cats .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.c===cat2));});
+  $('#filters').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;filter=b.dataset.f;document.querySelectorAll('#filters .chip').forEach(x=>x.setAttribute('aria-pressed',x.dataset.f===filter));renderWall();});
+  $('#sortLike').onclick=()=>{sort='like';$('#sortLike').setAttribute('aria-pressed',true);$('#sortNew').setAttribute('aria-pressed',false);renderWall();};
+  $('#sortNew').onclick=()=>{sort='new';$('#sortNew').setAttribute('aria-pressed',true);$('#sortLike').setAttribute('aria-pressed',false);renderWall();};
+  $('#text2').addEventListener('input',e=>{$('#len2').textContent=e.target.value.length+' / 200'});
+  $('#fs').onclick=()=>{const el=$('#p-all');if(el.requestFullscreen){el.requestFullscreen().catch(()=>{});}};
+
+  function msg(id,t,err){const m=$(id);m.textContent=t;m.classList.toggle('err',!!err);if(!err)setTimeout(()=>{if(m.textContent===t)m.textContent=''},2600);}
+  function notice(html){const n=$('#notice');n.innerHTML=html;n.hidden=!html;}
+
+  // --- Netlify 서버(/api/board)와 주고받기 ---
+  const API='/api/board';
+  let adminPin=null; try{adminPin=sessionStorage.getItem('pin');}catch(e){}
+  function applyBoard(b){if(!b||typeof b!=='object')return;q1=b.q1||{};q2=b.q2||{};likes=b.likes||{};renderAll();}
+  async function api(body){
+    const r=await fetch(API,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body)});
+    let data=null;try{data=await r.json();}catch(e){}
+    if(!r.ok){const err=new Error((data&&data.error)||'http');err.status=r.status;throw err;}
+    applyBoard(data);return data;
+  }
+  function handleErr(e,id){
+    if(e&&e.status===429||e&&e.status===503)msg(id,'지금 응답이 몰리고 있어요. 잠시 후 다시 눌러 주세요.',true);
+    else if(e&&e.status===404)msg(id,'저장 서버를 찾지 못했어요. 진행자에게 배포 설정을 확인해 달라고 알려 주세요.',true);
+    else msg(id,'저장하지 못했어요. 잠시 후 다시 눌러 주세요.',true);
+  }
+  let polling=false;
+  async function poll(){
+    if(polling)return;polling=true;
+    try{
+      const r=await fetch(API,{cache:'no-store'});
+      if(r.status===404){notice('저장 서버(<b>/api/board</b>)를 찾지 못했어요. GitHub로 배포했는지, netlify 폴더가 함께 올라갔는지 확인해 주세요.');}
+      else if(r.ok){notice('');applyBoard(await r.json());}
+    }catch(e){notice('서버에 연결하지 못했어요. 인터넷 연결을 확인해 주세요. 연결되면 자동으로 다시 불러와요.');}
+    finally{polling=false;}
+  }
+
+  // --- submit Q1 ---
+  $('#f1').addEventListener('submit',async e=>{
+    e.preventDefault();
+    if(!pick.choice)return msg('#msg1','먼저 위에서 하나를 골라 주세요.',true);
+    const body={op:'q1',key:me,choice:pick.choice,kinds:pick.choice==='never'?[]:[...pick.kinds],note:$('#note1').value.trim().slice(0,150),hard:$('#hard1').value.trim().slice(0,200),name:myName()};
+    $('#save1').disabled=true;
+    try{await api(body);q1Loaded=true;$('#save1').textContent='응답 고치기';msg('#msg1','응답을 보냈어요. 아래 결과에 바로 반영돼요.');}
+    catch(err){handleErr(err,'#msg1');}
+    finally{if(!readOnly)$('#save1').disabled=false;}
+  });
+
+  // --- submit Q2 ---
+  const myItems=()=>(q2[me]&&Array.isArray(q2[me].items))?q2[me].items:[];
+  $('#f2').addEventListener('submit',async e=>{
+    e.preventDefault();
+    const text=$('#text2').value.trim();
+    if(!cat2)return msg('#msg2','불편함의 종류를 하나 골라 주세요.',true);
+    if(text.length<2)return msg('#msg2','상황을 조금만 더 적어 주세요.',true);
+    if(myItems().length>=15)return msg('#msg2','한 사람당 15장까지 올릴 수 있어요.',true);
+    $('#add2').disabled=true;
+    try{await api({op:'add',key:me,name:myName(),cat:cat2,text:text.slice(0,200)});$('#text2').value='';$('#len2').textContent='0 / 200';msg('#msg2','카드를 올렸어요.');}
+    catch(err){handleErr(err,'#msg2');}
+    finally{if(!readOnly)$('#add2').disabled=false;}
+  });
+  $('#mine2').addEventListener('click',async e=>{
+    const b=e.target.closest('[data-del]');if(!b)return;
+    try{await api({op:'del',key:me,id:b.dataset.del});}catch(err){handleErr(err,'#msg2');}
+  });
+
+  // likes & owner moderation on wall
+  document.addEventListener('click',async e=>{
+    const lb=e.target.closest('[data-like]');
+    if(lb){
+      if(readOnly)return;
+      lb.disabled=true;
+      try{await api({op:'like',key:me,card:lb.dataset.like});}catch(err){handleErr(err,'#msg2');lb.disabled=false;}
+      return;
+    }
+    const hb=e.target.closest('[data-hide]');
+    if(hb&&isOwner){
+      try{await api({op:'hide',pin:adminPin,card:hb.dataset.hide});}catch(err){}
+    }
+  });
+
+  // --- render helpers ---
+  function donut(svgSel,counts,total){
+    const r=78,c=2*Math.PI*r;let off=0;let s=`<circle cx="100" cy="100" r="${r}" fill="none" stroke="var(--line)" stroke-width="30"/>`;
+    if(total>0)CHOICES.forEach(ch=>{const v=counts[ch.id]||0;if(!v)return;const len=v/total*c;
+      s+=`<circle cx="100" cy="100" r="${r}" fill="none" stroke="${ch.color}" stroke-width="30" stroke-dasharray="${len} ${c-len}" stroke-dashoffset="${-off}" transform="rotate(-90 100 100)"/>`;off+=len;});
+    $(svgSel).innerHTML=s;
+  }
+  function bars(sel,rows,total,emptyText){
+    if(!total){$(sel).innerHTML=`<div class="empty">${emptyText}</div>`;return;}
+    const max=Math.max(1,...rows.map(r=>r.n));
+    $(sel).innerHTML=rows.map(r=>`<div class="bar"><span>${esc(r.label)}</span><div class="track"><div class="fill" style="width:${r.n/max*100}%"></div></div><span class="n">${r.n}</span></div>`).join('');
+  }
+  const ago=t=>{const m=Math.round((Date.now()-t)/60000);return m<1?'방금':m<60?m+'분 전':Math.round(m/60)+'시간 전';};
+  const catLabel=id=>(CATS.find(c=>c.id===id)||{label:'기타'}).label;
+
+  function allCards(){
+    const likeCount={};
+    Object.values(likes).forEach(l=>(l.keys||[]).forEach(k=>likeCount[k]=(likeCount[k]||0)+1));
+    const mineLiked=new Set((likes[me]&&likes[me].keys)||[]);
+    const out=[];
+    Object.entries(q2).forEach(([owner,d])=>(d.items||[]).forEach(i=>{if(!i||typeof i.text!=='string')return;const key=owner+'|'+i.id;
+      out.push({key,owner,id:i.id,cat:i.cat,text:i.text,at:i.at||0,name:d.name||'익명 선생님',likes:likeCount[key]||0,liked:mineLiked.has(key)})}));
+    return out;
+  }
+  function cardHtml(c,opts={}){
+    const mine=c.owner===me;
+    return `<article class="card"><span class="tag">${esc(catLabel(c.cat))}</span><p>${esc(c.text)}</p><div class="foot"><span>${esc(c.name)}</span><span>· ${ago(c.at)}</span>
+      ${isOwner&&!mine&&!opts.noTools?`<button class="x" type="button" data-hide="${esc(c.key)}">숨기기</button>`:''}
+      <button class="like" type="button" data-like="${esc(c.key)}" aria-pressed="${c.liked}" ${mine||readOnly?'disabled title="내 카드에는 공감할 수 없어요"':''}>나도요 <b>${c.likes}</b></button></div></article>`;
+  }
+
+  function renderQ1(){
+    const rows=Object.values(q1).filter(r=>r&&CHOICES.some(c=>c.id===r.choice));
+    const total=rows.length;const counts={};rows.forEach(r=>counts[r.choice]=(counts[r.choice]||0)+1);
+    $('#q1n').textContent=total;
+    donut('#donut1',counts,total);donut('#donut2',counts,total);
+    const made=(counts.often||0)+(counts.some||0);
+    $('#q1headline').innerHTML=total?`${Math.round(made/total*100)}%가<br>만들어 봤어요`:'얼마나 자주<br>만들까요?';
+    const pct=id=>total?Math.round((counts[id]||0)/total*100):0;
+    $('#legend1').innerHTML=CHOICES.map(c=>`<span><i style="background:${c.color}"></i>${c.label} <em>${pct(c.id)}%</em></span>`).join('');
+    $('#legend2').innerHTML=total?CHOICES.map(c=>`<div style="display:flex;gap:8px;align-items:center"><i style="width:12px;height:12px;border-radius:4px;background:${c.color};display:inline-block"></i>${c.label}<b style="font-family:var(--f-num);margin-left:auto;padding-left:12px">${counts[c.id]||0}명</b></div>`).join(''):'<div class="empty">아직 응답이 없어요.</div>';
+    const kc={};rows.forEach(r=>(r.kinds||[]).forEach(k=>{if(KINDS.includes(k))kc[k]=(kc[k]||0)+1}));
+    const krows=KINDS.map(k=>({label:k,n:kc[k]||0})).filter(r=>r.n).sort((a,b)=>b.n-a.n);
+    bars('#kindBars',krows,krows.length,'응답이 들어오면 자료 종류별 막대가 여기에 그려져요.');
+    bars('#kindBars2',krows.slice(0,5),krows.length,'자료 종류가 아직 없어요.');
+    const notes=rows.filter(r=>r.note).sort((a,b)=>(b.at||0)-(a.at||0));
+    $('#noteCount').textContent=notes.length?notes.length+'개':'';
+    $('#notes1').innerHTML=notes.length?notes.map(r=>`<div class="note"><p>${esc(r.note)}</p><div class="meta"><span>${esc(r.name||'익명 선생님')}</span>${(r.kinds||[]).slice(0,3).map(k=>`<span class="tag">${esc(k)}</span>`).join('')}</div></div>`).join(''):'<div class="empty">위에서 한 줄 소개를 남기면 여기에 카드로 모여요.</div>';
+    const hards=rows.filter(r=>typeof r.hard==='string'&&r.hard).sort((a,b)=>(b.at||0)-(a.at||0));
+    $('#hardCount').textContent=hards.length?hards.length+'개':'';
+    const hardCard=r=>`<div class="note"><p>${esc(r.hard)}</p><div class="meta"><span>${esc(r.name||'익명 선생님')}</span></div></div>`;
+    $('#hardList').innerHTML=hards.length?hards.map(hardCard).join(''):'<div class="empty">위에서 어려운 점을 적으면 여기에 카드로 모여요.</div>';
+    $('#hard2').innerHTML=hards.length?hards.slice(0,3).map(hardCard).join(''):'<div class="empty">아직 올라온 어려운 점이 없어요.</div>';
+    // restore my own answer once
+    if(me&&q1[me]&&!q1Loaded){q1Loaded=true;const m=q1[me];pick.choice=m.choice;pick.kinds=new Set(m.kinds||[]);$('#note1').value=m.note||'';$('#hard1').value=m.hard||'';paintPick();$('#save1').textContent='응답 고치기';}
+  }
+  function renderWall(){
+    const cards=allCards();
+    const total=cards.length;
+    const cc={};cards.forEach(c=>cc[c.cat]=(cc[c.cat]||0)+1);
+    const crows=CATS.map(c=>({label:c.label,id:c.id,n:cc[c.id]||0})).filter(r=>r.n).sort((a,b)=>b.n-a.n);
+    bars('#catBars',crows,total,'카드가 올라오면 종류별로 모아 보여 드려요.');
+    $('#q2sum').textContent=total?`${Object.values(q2).filter(d=>(d.items||[]).length).length}명의 선생님이 ${total}장의 카드를 올렸어요. 가장 많은 고민은 ‘${crows[0].label}’이에요.`:'첫 카드를 기다리고 있어요.';
+    let list=cards.filter(c=>filter==='all'||c.cat===filter);
+    list.sort(sort==='like'?(a,b)=>b.likes-a.likes||b.at-a.at:(a,b)=>b.at-a.at);
+    $('#wall').innerHTML=list.length?list.map(c=>cardHtml(c)).join(''):`<div class="empty" style="grid-column:1/-1">${total?'이 종류의 카드는 아직 없어요.':'위에서 첫 번째 불편함 카드를 올려 주세요. 올린 카드는 모두에게 바로 보여요.'}</div>`;
+    const mine=myItems();
+    $('#mine2').innerHTML=mine.length?`<div class="flabel" style="margin:0">내가 올린 카드 ${mine.length}장</div>`+mine.map(i=>`<div class="note"><p>${esc(i.text)}</p><div class="meta"><span class="tag">${esc(catLabel(i.cat))}</span><button class="x" type="button" data-del="${esc(i.id)}">지우기</button></div></div>`).join(''):'';
+    // presenter
+    $('#bigN').textContent=total;$('#topCat').textContent=crows[0]?crows[0].label:'-';
+    const top=[...cards].sort((a,b)=>b.likes-a.likes||b.at-a.at).slice(0,3);
+    $('#top3').innerHTML=top.length?top.map(c=>cardHtml(c,{noTools:true})).join(''):'<div class="empty">카드가 올라오면 공감 많은 순으로 보여요.</div>';
+  }
+  function renderCount(){
+    const ids=new Set([...Object.keys(q1),...Object.entries(q2).filter(([,d])=>(d.items||[]).length).map(([k])=>k)]);
+    $('#pcount').textContent=ids.size;
+  }
+  function renderAll(){renderQ1();renderWall();renderCount();}
+
+  // teacher figure for Q2 stage (original simple drawing)
+  $('#who2').innerHTML=`<svg viewBox="0 0 120 150"><path d="M20 150c0-34 18-52 40-52s40 18 40 52z" fill="var(--green-ink)"/><path d="M48 100l12 18 12-18" fill="var(--green)"/><circle cx="60" cy="62" r="30" fill="#ffe2c6" stroke="var(--green-ink)" stroke-width="3"/><path d="M30 58c0-24 16-32 32-32s30 10 28 30c-8-10-22-14-38-10-10 2-16 6-22 12z" fill="var(--green-ink)"/><circle cx="50" cy="66" r="3" fill="var(--green-ink)"/><circle cx="70" cy="66" r="3" fill="var(--green-ink)"/><path d="M52 78q8 6 16 0" stroke="var(--green-ink)" stroke-width="3" fill="none" stroke-linecap="round"/><rect x="74" y="106" width="30" height="38" rx="3" fill="#fff" stroke="var(--green-ink)" stroke-width="3" transform="rotate(-8 89 125)"/></svg>`;
+
+  paintPick();renderAll();
+
+  // --- connect ---
+  function connect(){
+    // 로그인 없이 이 브라우저를 구분하는 키 (같은 기기로 다시 들어오면 내 응답을 이어서 고칠 수 있어요)
+    let uid=ls.get('pkey');if(!uid||!/^[A-Za-z0-9_-]{4,40}$/.test(uid)){uid='k'+Date.now().toString(36)+Math.random().toString(36).slice(2,8);ls.set('pkey',uid);}
+    me=uid;
+    poll();
+    // 4초마다 새 응답을 불러와요 (화면이 숨겨져 있으면 쉬어요)
+    setInterval(()=>{if(!document.hidden)poll();},4000);
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)poll();});
+  }
+
+  // --- 진행자 모드: 카드 숨기기, 전체 초기화 ---
+  function paintAdmin(){
+    $('#adminTools').hidden=!isOwner;
+    $('#adminBtn').textContent=isOwner?'진행자 모드 끄기':'진행자';
+  }
+  isOwner=!!adminPin;
+  paintAdmin();
+  $('#adminBtn').onclick=async()=>{
+    if(isOwner){isOwner=false;adminPin=null;try{sessionStorage.removeItem('pin')}catch(e){}paintAdmin();renderAll();return;}
+    const pin=prompt('진행자 비밀번호를 입력하세요');
+    if(pin===null)return;
+    try{
+      await api({op:'checkpin',pin});
+      isOwner=true;adminPin=pin;try{sessionStorage.setItem('pin',pin)}catch(e){}
+      paintAdmin();renderAll();
+    }catch(e){alert(e.status===403?'비밀번호가 맞지 않아요.':'서버에 연결하지 못했어요.');}
+  };
+  $('#resetAll').onclick=async()=>{
+    if(!isOwner)return;
+    if(!confirm('모든 응답과 카드, 공감을 지울까요? 되돌릴 수 없어요.'))return;
+    try{await api({op:'reset',pin:adminPin});alert('모두 지웠어요. 새 연수를 시작할 수 있어요.');}
+    catch(e){alert('지우지 못했어요. 비밀번호를 다시 확인해 주세요.');}
+  };
+  connect();
+})();
+</script>
