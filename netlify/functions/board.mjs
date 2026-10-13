@@ -115,10 +115,12 @@ export default async (req) => {
     const d = (cur && cur.data) || empty();
     const err = apply(d, b);
     if (err) return json({ error: err }, err === "full" ? 429 : 400);
+    const body = JSON.stringify(d);
     const res = cur
-      ? await store.setJSON(KEY, d, { onlyIfMatch: cur.etag })
-      : await store.setJSON(KEY, d, { onlyIfNew: true });
-    if (res.modified) return json(d);
+      ? await store.set(KEY, body, { onlyIfMatch: cur.etag })
+      : await store.set(KEY, body, { onlyIfNew: true });
+    // res가 비어 있으면(조건부 저장을 모르는 옛 버전) 저장된 것으로 봐요
+    if (!res || res.modified !== false) return json(d);
     await new Promise((r) => setTimeout(r, 30 + Math.random() * 150));
   }
   return json({ error: "busy" }, 503);
